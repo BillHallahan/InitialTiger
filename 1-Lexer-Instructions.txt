@@ -1,0 +1,131 @@
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+Project 1: Lexing
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+In this project, you will use ML-Lex to implement a lexer for Tiger.
+
+Documentation for ML-Lex is available at:
+    http://www.smlnj.org/doc/ML-Lex/manual.html
+
+REMINDER: You MUST commit and push to GitHub at least once per day that you work
+on your project.  Final submission must be done on BrightSpace.
+
+1) Clone the 1-Lexer starting project.  This project contains:
+
+    - sources.cm - the "makefile"
+    - tokens.sig - Signature of the Tokens structure.
+    - tokens.sml - The Tokens structure, containing the token type and constructors
+                   that your lexer should use to build instances of the token type. 
+    - errormsg.sml - The ErrorMsg structure, useful for producing error messages
+                     with file names and line numbers.
+    - driver.sml - A test scaffold to run your lexer on an input file.
+    - tiger.lex - A skeleton lexer file.
+
+    - testcases/lex/ - a folder containing test cases that should be successfully lexed
+    - testcases/nolex/ - a folder containing test cases that should error during lexing
+    - test.py - a python script, to automatically run your project on the test cases
+
+sources.cm is a file for the Standard ML compilation manager.  You can learn about this here:
+    https://www.smlnj.org/doc/CM/new.pdf
+
+but all you really need to know is that to build, you run
+    CM.make "sources.cm";
+in the sml REPL.
+
+2) A skeleton lexer is provided in tiger.lex.  Extend the lexer to support lexing the tiger language.
+
+Take this opportunity to read the Appendix (page 512) of Modern Compiler Implementation in ML,
+which specifies the syntax and semantics of the Tiger language.
+
+The reserved words of the language are:
+    while, for, to, break, let, in, end, functon, var, type, array, if, then, else, do, of
+
+The punctuation symbols used are:
+    , : ; ( ) [ ] { } . + - * / = <> < <= > >= & | :=
+
+String values returned for string literals should have all escape sequences translated into their meanings.
+Lexing strings is a bit tricky, because you have to read an arbitrary amount of the input, then squeeze
+everything you read into a single token.
+
+Translate negative literals into two separate tokens: one for unary negation, and a positive literal.
+
+Detect (and error on) unclosed (at end of file) comments and unclosed strings.
+
+Hint: mutable references can be useful to track whether you are in a comment, number of nested comments,
+currently read in portion of a string... in general, references are useful to track global state.
+
+CLARIFICATION AND BONUS POINT OPPORTUNITY:
+The appendix says that, in a string, \^c should be interpreted as "the control character c, for any appropriate c."
+To simplify, we will say that there are no required appropriate c, i.e. you do not need to handle control characters.
+I will give a small number (at most 5) of bonus point to any projects that (1) implement support for control characters
+and (2) include new benchmarks demonstrating this support.  If taking advantage of this, please include a file
+called README in your submission, and document in it your support and new benchmarks.
+
+3) To test your project on a particular file, build the project, then run `Parse.parse <tiger file>` in the sml REPL:
+
+- CM.make "sources.cm";
+...
+val it = true : bool
+- Parse.parse "testcases/test1.tig";
+LET   45
+TYPE   51
+ID(arrtype)     57
+EQ   65
+ARRAY   67
+OF   73
+ID(int)     76
+VAR   82
+ID(arr1)     86
+COLON   90
+ID(arrtype)     91
+ASSIGN   99
+ID(arrtype)     102
+LBRACK   110
+INT(10)   111
+RBRACK   113
+OF   115
+INT(0)   118
+IN   121
+ID(arr1)     126
+END   132
+EOF   136
+val it = () : unit
+
+To check all test cases, use the provided test.py python script (on the command line, NOT in the sml REPL):
+    > python3 test.py 
+    test2.tig
+        Correct
+    queens.tig
+        Correct
+    test3.tig
+        Correct
+    ...
+
+"Correct" should be printed for all provided test files.  If "Incorrect" is printed, you need to fix your project
+(or reach out to me if you believe a test is incorrect.)  If "Timeout" is printed, it means the lexer took more than
+2 seconds to finish- this is also likely a sign that something is wrong.
+
+We are NOT asking you to submit additional test cases for this assignment.  But if you would like to use the provided
+test script to run additional tests, you can:
+    (1) put additional *.tig files in the "testcases" folder
+    (2) put files corresponding to the expected output in the "out" folder
+        (examine the existing files for examples.)
+
+4) To submit, zip ALL files required to build your project, and upload to BrightSpace.
+
+We should be able to unzip your submitted folder, navigate to it on the command line, and run:
+
+% sml            
+Standard ML of New Jersey (64-bit) v110.99.3 [built: Thu Jul 28 00:35:16 2022]
+- CM.make "sources.cm";
+...
+val it = true : bool
+- Parse.parse "testcases/test1.tig";
+LET   45
+TYPE   51
+...
+
+If you omit files needed to build your project from your submissions, you will be asked to resubmit, and your
+project will be counted as a late submission.
